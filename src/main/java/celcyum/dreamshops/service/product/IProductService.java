@@ -1,5 +1,6 @@
 package celcyum.dreamshops.service.product;
 
+import celcyum.dreamshops.dto.ProductDto;
 import celcyum.dreamshops.model.Product;
 import celcyum.dreamshops.request.AddProductRequest;
 import celcyum.dreamshops.request.ProductUpdateRequest;
@@ -18,4 +19,8 @@ public interface IProductService {
     List<Product> getProductByName(String name);
     List<Product> getProductByBrandAndName(String category, String name);
     Long countProductByBrandAndName(String brand, String name);
+
+    List<ProductDto> getConvertedProducts(List<Product> products);
+
+    ProductDto convertDto(Product product);
 }

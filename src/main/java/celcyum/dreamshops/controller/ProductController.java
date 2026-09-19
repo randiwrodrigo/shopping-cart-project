@@ -1,5 +1,6 @@
 package celcyum.dreamshops.controller;
 
+import celcyum.dreamshops.dto.ProductDto;
 import celcyum.dreamshops.exceptions.ResourcesNotFoundException;
 import celcyum.dreamshops.model.Product;
 import celcyum.dreamshops.request.AddProductRequest;
@@ -17,21 +18,24 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("${api.perfix}/product")
+@RequestMapping("${api.perfix}/products")
 public class ProductController {
     private final IProductService productService;
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponse> getAllProducts(){
         List<Product> products = productService.getAllProducts();
-        return ResponseEntity.ok(new ApiResponse("success", products));
+        List<ProductDto> convertProducts = productService.getConvertedProducts(products);
+        return ResponseEntity.ok(new ApiResponse("success", convertProducts));
     }
 
     @GetMapping("/product/{productId}/product")
     public ResponseEntity<ApiResponse> getProductById(@PathVariable Long productId){
         try {
             Product product = productService.getProductById(productId);
-            return ResponseEntity.ok(new ApiResponse("success", product));
+            ProductDto productDto = productService.convertDto(product);
+
+            return ResponseEntity.ok(new ApiResponse("success", productDto));
         } catch (Exception e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
         }
