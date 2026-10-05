@@ -2,9 +2,8 @@ package celcyum.dreamshops.service.cart;
 
 import celcyum.dreamshops.exceptions.ResourcesNotFoundException;
 import celcyum.dreamshops.model.Cart;
-import celcyum.dreamshops.model.CartItem;
-import celcyum.dreamshops.repository.CartItemRepository;
 import celcyum.dreamshops.repository.CartRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +13,6 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class CartService implements ICartService {
     private final CartRepository cartRepository;
-    private final CartItemRepository cartItemRepository;
 
     @Override
     public Cart getCart(Long id) {
@@ -25,17 +23,30 @@ public class CartService implements ICartService {
         return cartRepository.save(cart);
     }
 
+    @Transactional
     @Override
     public void clearCart(Long id) {
         Cart cart = getCart(id);
-        cartItemRepository.deleteAllByCartId(id);
         cart.getCartItems().clear();
-        cartRepository.deleteById(id);
+        cart.setTotalAmount(BigDecimal.ZERO);
+        cartRepository.save(cart);
     }
 
     @Override
     public BigDecimal getTotalPrice(Long id) {
         Cart cart = getCart(id);
         return cart.getTotalAmount();
+    }
+
+    @Override
+    public Long initializeNewCart(){
+        Cart newCart = new Cart();
+        return cartRepository.save(newCart).getId();
+    }
+
+    @Override
+    public Cart getCartByUserId(Long userId) {
+        return cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourcesNotFoundException("Cart not found for user"));
     }
 }

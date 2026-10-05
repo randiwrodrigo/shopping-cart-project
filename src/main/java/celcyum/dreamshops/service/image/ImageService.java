@@ -6,7 +6,6 @@ import celcyum.dreamshops.model.Image;
 import celcyum.dreamshops.model.Product;
 import celcyum.dreamshops.repository.ImageRepository;
 import celcyum.dreamshops.service.product.IProductService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

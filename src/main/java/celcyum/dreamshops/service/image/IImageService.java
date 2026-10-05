@@ -2,7 +2,6 @@ package celcyum.dreamshops.service.image;
 
 import celcyum.dreamshops.dto.ImageDto;
 import celcyum.dreamshops.model.Image;
-import celcyum.dreamshops.model.Product;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
