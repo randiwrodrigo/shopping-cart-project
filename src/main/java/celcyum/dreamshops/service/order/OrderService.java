@@ -1,5 +1,6 @@
 package celcyum.dreamshops.service.order;
 
+import celcyum.dreamshops.dto.OrderDto;
 import celcyum.dreamshops.enums.OrderStatus;
 import celcyum.dreamshops.exceptions.ResourcesNotFoundException;
 import celcyum.dreamshops.model.Cart;
@@ -11,6 +12,7 @@ import celcyum.dreamshops.repository.ProductRepository;
 import celcyum.dreamshops.service.cart.ICartService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -24,6 +26,7 @@ public class OrderService implements IOrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final ICartService cartService;
+    private final ModelMapper modelMapper;
 
     @Transactional
     @Override
@@ -70,8 +73,20 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public Order getUserOrder(Long orderId) {
+    public OrderDto getOrder(Long orderId) {
         return orderRepository.findById(orderId)
+                .map(this::convertToDto)
                 .orElseThrow(() -> new ResourcesNotFoundException("Order not found"));
+    }
+
+    @Override
+    public List<OrderDto> getUserOrders(Long userId) {
+        List<Order> orders = orderRepository.findByUserId(userId);
+        return orders.stream().map(this::convertToDto).toList();
+    }
+
+    @Override
+    public OrderDto convertToDto(Order order) {
+        return modelMapper.map(order, OrderDto.class);
     }
 }
